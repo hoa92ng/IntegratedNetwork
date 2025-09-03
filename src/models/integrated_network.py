@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers import PreTrainedModel
 
-from attention_smoothing_cbam1d import CBAM1D
+from src.models.attention_smoothing_cbam1d import CBAM1D
 
 
 class Projection(nn.Module):
@@ -194,4 +194,5 @@ class IntegratedNetwork(nn.Module):
             disc_in = sub_proj
 
         anomaly_logits = self.discriminator(disc_in)      # (N_mix, 1)
+
         return class_logits, anomaly_logits
