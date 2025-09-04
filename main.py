@@ -10,7 +10,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--feature_model", type=str, default=None,
                    help="Optional HF feature extractor id (defaults to backbone_model)")
 
-    p.add_argument("--use_data_from_disk", type=bool, required=True, default=True)
+    p.add_argument("--use_data_from_disk", action="store_true")
     p.add_argument("--train_data_path", type=str)
     p.add_argument("--valid_data_path", type=str)
     p.add_argument("--data_version", type=str, default="v0.01")
@@ -50,3 +50,4 @@ if __name__ == "__main__":
     parser = build_parser()
     args = parser.parse_args()
     train(args)
+
