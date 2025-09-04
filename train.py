@@ -56,10 +56,8 @@ def train(args) -> None:
     backbone, feat_extractor = make_backbone(args.backbone_model, device)
 
     # data
-    train_ds = CustomAudioDataset(args.train_data_path, feature_extractor=feat_extractor, \
-                                  use_data_from_disk=args.use_data_from_disk, split="train", data_version=args.data_version)
-    valid_ds = CustomAudioDataset(args.valid_data_path, feature_extractor=feat_extractor, \
-                                  use_data_from_disk=args.use_data_from_disk, split="validation", data_version=args.data_version)
+    train_ds = CustomAudioDataset(args.train_data_path, feature_extractor=feat_extractor, use_data_from_disk=args.use_data_from_disk, split="train", data_version=args.data_version)
+    valid_ds = CustomAudioDataset(args.valid_data_path, feature_extractor=feat_extractor, use_data_from_disk=args.use_data_from_disk, split="validation", data_version=args.data_version)
 
     if args.show_qty:
         train_ds.show_counts()
@@ -118,8 +116,8 @@ def train(args) -> None:
 
         for batch in train_loader:
             x = batch["input_values"].to(device)
-            y_anom = batch["anomaly_label"].to(device)  # 1 normal, 0 anomaly/unknown
-            y_cls = batch["label"][batch["anomaly_label"] == 1].to(device)  # only normals have class labels
+            y_anom = batch["nomaly_label"].to(device)  # 1 normal, 0 anomaly/unknown
+            y_cls = batch["label"][batch["nomaly_label"] == 1].to(device)  # only normals have class labels
 
             if y_cls.numel() == 0:
                 # no normal samples in this batch; skip classification loss
@@ -192,8 +190,8 @@ def train(args) -> None:
         with torch.no_grad(), autocast(enabled=not args.no_amp):
             for batch in valid_loader:
                 x = batch["input_values"].to(device)
-                y_anom = batch["anomaly_label"].to(device)
-                y_cls = batch["label"][batch["anomaly_label"] == 1].to(device)
+                y_anom = batch["nomaly_label"].to(device)
+                y_cls = batch["label"][batch["nomaly_label"] == 1].to(device)
 
                 class_logits, anom_logits = model(x, anomaly_label=y_anom, train_mode=False)
 
