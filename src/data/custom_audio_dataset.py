@@ -6,18 +6,64 @@ from typing import Any, Callable, Dict, List, Optional, Sequence
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from datasets import load_from_disk
+from datasets import load_from_disk, load_dataset
 
 # Keywords
-WORDS = ["yes", "no", "up", "down", "left", "right", "on", "off", "stop", "go"]
-UNKNOWN_WORDS_V1 = [
-    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    "bed", "bird", "cat", "dog", "happy", "house", "marvin", "sheila", "tree", "wow",
-]
-UNKNOWN_WORDS_V2 = UNKNOWN_WORDS_V1 + ["backward", "forward", "follow", "learn", "visual"]
-SILENCE = "_silence_"
-LABELS_V1 = WORDS + UNKNOWN_WORDS_V1 + [SILENCE]
-LABELS_V2 = WORDS + UNKNOWN_WORDS_V2 + [SILENCE]
+LABEL_MAP = {
+    'yes': 0, 'no': 1, 'up': 2, 'down': 3, 'left': 4,
+    'right': 5, 'on': 6, 'off': 7, 'stop': 8, 'go': 9,
+    'unknown': 10, '_silence_': 11
+}
+
+ANOMALY_LABELS = {10: 0, 11: 10}
+VALID_LABELS = list(range(10))
+VALID_LABELS = list(range(10))
+
+def transform_labels(examples: dict) -> dict:
+    """
+    Transforms labels in a batch of examples.
+    - Maps 'unknown' and '_silence_' to their correct integer values.
+    """
+    labels = examples['label']
+    is_unknown = examples['is_unknown']
+    
+    transformed_labels = []
+    for label, unknown in zip(labels, is_unknown):
+        # Convert integer label back to its name using the dataset's features
+        label_name = ID_TO_LABEL.get(label)
+        
+        if unknown:
+            transformed_labels.append(LABEL_MAP['unknown'])
+        elif label_name == '_silence_':
+            transformed_labels.append(LABEL_MAP['_silence_'])
+        else:
+            transformed_labels.append(label)
+            
+    examples['label'] = transformed_labels
+    return examples
+
+def add_nomaly_and_re_labels(examples: dict) -> dict:
+    """
+    Adds 'nomaly_label' and 're_label' based on the 'label' field.
+    'nomaly_label' is 0 for 'unknown' and 1 otherwise.
+    're_label' is -1 for 'unknown', 10 for '_silence_', and the original label otherwise.
+    """
+    labels = examples['label']
+    
+    nomaly_labels = []
+    re_labels = []
+
+    for label in labels:
+        if label == LABEL_MAP['unknown']:
+            nomaly_labels.append(0)
+            re_labels.append(-1)
+        else:
+            nomaly_labels.append(1)
+            re_labels.append(ANOMALY_LABELS.get(label, label))
+
+    examples['nomaly_label'] = nomaly_labels
+    examples['re_label'] = re_labels
+    return examples
 
 
 class CustomAudioDataset(Dataset):
@@ -34,6 +80,9 @@ class CustomAudioDataset(Dataset):
         dataset_path: str,
         feature_extractor,
         use_transform: bool = False,
+        use_data_from_disk: bool = True,
+        data_version: str = 'v0.01',
+        split: str = 'train',
         sr: int = 16_000,
         transforms: Optional[Sequence[Callable[[np.ndarray, int], np.ndarray]]] = None,
     ) -> None:
@@ -43,7 +92,16 @@ class CustomAudioDataset(Dataset):
         self.use_transform = use_transform
         self.transforms = transforms or []
 
-        ds = load_from_disk(dataset_path)
+        if use_data_from_disk:
+            ds = load_from_disk(dataset_path)
+        else:
+            ds = load_dataset("google/speech_commands", data_version, split=split, trust_remote_code=True)
+            # Global access to the label mapping, useful for transform_labels
+            global ID_TO_LABEL
+            ID_TO_LABEL = ds.features['label'].names
+            ds = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
+            ds = ds.rename_column('re_label', 'label')
+
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
         ds = ds.map(self._add_anomaly_label)
         self.ds = ds
