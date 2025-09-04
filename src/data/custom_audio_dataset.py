@@ -97,10 +97,12 @@ class CustomAudioDataset(Dataset):
         else:
             ds = load_dataset("google/speech_commands", data_version, split=split, trust_remote_code=True)
             # Global access to the label mapping, useful for transform_labels
-            global ID_TO_LABEL
-            ID_TO_LABEL = ds.features['label'].names
+            global ID_TO_LABEL, LABEL_TO_ID
+            class_names = ds.features['label'].names
+            LABEL_TO_ID = {label: i for i, label in enumerate(class_names)}
+            ID_TO_LABEL = {i: label for i, label in enumerate(class_names)}
             ds = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
-            ds = ds.rename_column('re_label', 'label')
+            ds = ds.remove_columns('label').rename_column('re_label', 'label')
 
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
         ds = ds.map(self._add_anomaly_label)
@@ -137,7 +139,7 @@ class CustomAudioDataset(Dataset):
 
         return {
             "label": torch.as_tensor(row["label"], dtype=torch.long),
-            "anomaly_label": torch.as_tensor(row["anomaly_label"], dtype=torch.long),
+            "nomaly_label": torch.as_tensor(row["nomaly_label"], dtype=torch.long),
             "input_values": torch.from_numpy(ivals),
         }
 
