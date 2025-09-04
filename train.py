@@ -56,8 +56,10 @@ def train(args) -> None:
     backbone, feat_extractor = make_backbone(args.backbone_model, device)
 
     # data
-    train_ds = CustomAudioDataset(args.train_data_path, feature_extractor=feat_extractor)
-    valid_ds = CustomAudioDataset(args.valid_data_path, feature_extractor=feat_extractor)
+    train_ds = CustomAudioDataset(args.train_data_path, feature_extractor=feat_extractor, \
+                                  use_data_from_disk=args.use_data_from_disk, split="train", data_version=args.data_version)
+    valid_ds = CustomAudioDataset(args.valid_data_path, feature_extractor=feat_extractor, \
+                                  use_data_from_disk=args.use_data_from_disk, split="validation", data_version=args.data_version)
 
     if args.show_qty:
         train_ds.show_counts()
