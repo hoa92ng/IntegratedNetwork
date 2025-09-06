@@ -6,7 +6,7 @@ Authors: Van-Hoa Nguyen, Viet-Cuong Ta
 
 Paper: [Robust Model for Speech Command Recognition with Integrated Classifier](https://www.xxxxx)
 
-![Proposed Architecture](img/proposed_architecture.pdf)
+![Proposed Architecture](./img/proposed_architecture.pdf)
 
 ## 2. Setup
 
