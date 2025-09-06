@@ -22,9 +22,11 @@ The data will be automatically downloaded and processed
 
 ```python main.py```
 
-3.1 Seed: 42
+3.0 To test IntergratedNetwork:
 
-3.2 Dataset choices: [google/speech_commands](https://huggingface.co/datasets/google/speech_commands)
+```python test.py```
+
+3.1 Dataset choices: [google/speech_commands](https://huggingface.co/datasets/google/speech_commands)
 
 ## 4. Backbone
 - [wav2vec2-base](https://huggingface.co/facebook/wav2vec2-base)
