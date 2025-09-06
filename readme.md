@@ -6,7 +6,7 @@ Authors: Van-Hoa Nguyen, Viet-Cuong Ta
 
 Paper: [Robust Model for Speech Command Recognition with Integrated Classifier](https://www.xxxxx)
 
-![Proposed Architecture](./img/proposed_architecture.pdf)
+![Proposed Architecture](./img/proposed_architecture.png)
 
 ## 2. Setup
 
@@ -27,8 +27,8 @@ The data will be automatically downloaded and processed
 3.2 Dataset choices: [google/speech_commands](https://huggingface.co/datasets/google/speech_commands)
 
 ## 4. Backbone
-- [wav2vec2-base](https://github.com/TaiLvYuanLiang/HGWaveNet)
-- [wav2vec2-base-960h](https://github.com/marlin-codes/HTGN)
-- [wav2vec2-large](https://github.com/VGraphRNN/VGRNN)
-- [wavlm-base](https://github.com/IBM/EvolveGCN)
-- [wavlm-large](https://github.com/FeiGSSS/DySAT_pytorch)
+- [wav2vec2-base](https://huggingface.co/facebook/wav2vec2-base)
+- [wav2vec2-base-960h](https://huggingface.co/facebook/wav2vec2-base-960h)
+- [wav2vec2-large](https://huggingface.co/facebook/wav2vec2-large)
+- [wavlm-base](https://huggingface.co/microsoft/wavlm-base)
+- [wavlm-large](https://huggingface.co/microsoft/wavlm-large)
