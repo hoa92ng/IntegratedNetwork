@@ -98,14 +98,7 @@ class CustomAudioDataset(Dataset):
             ds = load_from_disk(dataset_path)
         else:
             ds = load_dataset("google/speech_commands", data_version, split=split, trust_remote_code=True)
-            # Global access to the label mapping, useful for transform_labels
-            global ID_TO_LABEL, LABEL_TO_ID
-            class_names = ds.features['label'].names
-            LABEL_TO_ID = {label: i for i, label in enumerate(class_names)}
-            ID_TO_LABEL = {i: label for i, label in enumerate(class_names)}
-            ds = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
-            ds = ds.remove_columns('label').rename_column('re_label', 'label')
-
+        
         if use_augmentation:
             # Augementation dataset
             # Silent generation 5 -> 1800
@@ -115,6 +108,15 @@ class CustomAudioDataset(Dataset):
             audio_list = [np.array(sample["audio"]["array"]) for sample in filtered_silence_dataset]
             ds = create_and_combine_datasets(ds, NOISE_AUDIO_ARRAYS=audio_list)
 
+        # Global access to the label mapping, useful for transform_labels
+        global ID_TO_LABEL, LABEL_TO_ID
+        class_names = ds.features['label'].names
+        LABEL_TO_ID = {label: i for i, label in enumerate(class_names)}
+        ID_TO_LABEL = {i: label for i, label in enumerate(class_names)}
+        ds = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
+        ds = ds.remove_columns('label').rename_column('re_label', 'label')
+
+        
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
         ds = ds.map(self._add_anomaly_label)
         self.ds = ds
