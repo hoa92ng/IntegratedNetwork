@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from datasets import load_from_disk, load_dataset
-from audio_augmentation import create_and_combine_datasets, random_augementation, AugmentationMethod
+from src.data.audio_augmentation import create_and_combine_datasets, random_augementation, AugmentationMethod
 
 # Keywords
 LABEL_MAP = {
