@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from datasets import load_from_disk, load_dataset
+from audio_augmentation import create_and_combine_datasets, random_augementation, AugmentationMethod
 
 # Keywords
 LABEL_MAP = {
@@ -84,6 +85,7 @@ class CustomAudioDataset(Dataset):
         data_version: str = 'v0.01',
         split: str = 'train',
         sr: int = 16_000,
+        use_augmentation: bool = True,
         transforms: Optional[Sequence[Callable[[np.ndarray, int], np.ndarray]]] = None,
     ) -> None:
         super().__init__()
@@ -103,6 +105,15 @@ class CustomAudioDataset(Dataset):
             ID_TO_LABEL = {i: label for i, label in enumerate(class_names)}
             ds = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
             ds = ds.remove_columns('label').rename_column('re_label', 'label')
+
+        if use_augmentation:
+            # Augementation dataset
+            # Silent generation 5 -> 1800
+            # Filter rows with label == 10
+            filtered_silence_dataset = ds.filter(lambda example: example["label"] == 10)
+            # Convert audio to list of numpy arrays
+            audio_list = [np.array(sample["audio"]["array"]) for sample in filtered_silence_dataset]
+            ds = create_and_combine_datasets(ds, NOISE_AUDIO_ARRAYS=audio_list)
 
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
         ds = ds.map(self._add_anomaly_label)

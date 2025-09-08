@@ -78,15 +78,18 @@ def random_crop_wav(data_bank, idx, crop_duration=1):
     cropped_array = np.array(cropped_audio)
     return cropped_array, sample_rate
 
-def create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS:str, data_count=1000):
+def create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS:list=None, NOISE_AUDIO_ARRAYS:list=None, data_count=1000):
     """
     Generates a list of dictionaries containing noise data.
     Each dictionary is ready to be used to create a Hugging Face Dataset.
     """
     output_data_list = []
-
-    data_bank = get_silence_data_resources(NOISE_AUDIO_PATH_ARRAYS)
-    sample_rate = 16000
+    sample_rate = 16_000
+    if NOISE_AUDIO_PATH_ARRAYS:
+        data_bank = get_silence_data_resources(NOISE_AUDIO_PATH_ARRAYS)
+    else:
+        data_bank = [(x, sample_rate) for x in NOISE_AUDIO_ARRAYS]
+    
     for i in range(data_count):
         rand_method = random.randint(0, 1)
         # Crop from data bank
@@ -123,12 +126,12 @@ def create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS:str, data_count=1000):
         output_data_list.append(data_dict)
     return output_data_list
 
-def create_and_combine_datasets(NOISE_AUDIO_PATH_ARRAYS:str, concating_dataset, noise_data_count=1800):
+def create_and_combine_datasets(concating_dataset, noise_data_count=1800, NOISE_AUDIO_PATH_ARRAYS:list=None, NOISE_AUDIO_ARRAYS:list=None):
     """
     Combines the process of creating noise data and merging it
     with an existing dataset.
     """
-    synthetic_silence_data = create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS, data_count=noise_data_count)
+    synthetic_silence_data = create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS, NOISE_AUDIO_ARRAYS, data_count=noise_data_count)
 
     new_synthetic_silence_dataset = Dataset.from_list(synthetic_silence_data)
 

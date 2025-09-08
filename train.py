@@ -57,7 +57,7 @@ def train(args) -> None:
 
     # data
     train_ds = CustomAudioDataset(args.train_data_path, feature_extractor=feat_extractor, use_data_from_disk=args.use_data_from_disk, split="train", data_version=args.data_version)
-    valid_ds = CustomAudioDataset(args.valid_data_path, feature_extractor=feat_extractor, use_data_from_disk=args.use_data_from_disk, split="validation", data_version=args.data_version)
+    valid_ds = CustomAudioDataset(args.valid_data_path, feature_extractor=feat_extractor, use_data_from_disk=args.use_data_from_disk, split="validation", data_version=args.data_version, use_augmentation=False)
 
     if args.show_qty:
         train_ds.show_counts()
