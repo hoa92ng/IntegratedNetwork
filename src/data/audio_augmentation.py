@@ -6,7 +6,7 @@ from enum import Enum
 import random 
 import soundfile as sf
 import acoustics
-from datasets import Dataset, Audio, ClassLabel, concatenate_datasets
+from datasets import Dataset, Audio, ClassLabel, concatenate_datasets, Value
 
 class AugmentationMethod(Enum):
     NONE = 0
@@ -139,7 +139,8 @@ def create_and_combine_datasets(concating_dataset, noise_data_count=1800, NOISE_
     new_synthetic_silence_dataset = new_synthetic_silence_dataset.cast_column(
         'label', 
         ClassLabel(names=['yes', 'no', 'up', 'down', 'left', 'right', 'on', 'off', 'stop', 'go', '_silence_', 'unknown'])
-    )
+    ).cast_column("label", Value("int64"))
+
     final_dataset = concatenate_datasets([concating_dataset, new_synthetic_silence_dataset])
     return final_dataset
 
