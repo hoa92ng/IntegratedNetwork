@@ -140,6 +140,8 @@ def create_and_combine_datasets(concating_dataset, noise_data_count=1800, NOISE_
         'label', 
         ClassLabel(names=['yes', 'no', 'up', 'down', 'left', 'right', 'on', 'off', 'stop', 'go', '_silence_', 'unknown'])
     ).cast_column("label", Value("int64"))
+    new_synthetic_silence_dataset = new_synthetic_silence_dataset.cast_column("utterance_id", Value("int8"))  # <- fix the error
+
 
     final_dataset = concatenate_datasets([concating_dataset, new_synthetic_silence_dataset])
     return final_dataset
