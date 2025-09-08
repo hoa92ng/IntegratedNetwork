@@ -1,4 +1,3 @@
-acoustics==0.2.6
 datasets==2.17.0
 librosa==0.10.2.post1
 numpy==2.3.2
@@ -9,3 +8,4 @@ torchaudio==2.2.2+cu118
 torchmetrics==1.7.0
 tqdm==4.67.0
 transformers==4.46.2
+acoustics==0.2.6
