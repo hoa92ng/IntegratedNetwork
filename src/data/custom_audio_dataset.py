@@ -116,8 +116,8 @@ class CustomAudioDataset(Dataset):
             audio_list = [np.array(sample["audio"]["array"]) for sample in filtered_silence_dataset]
             
             synthetic_dataset = create_synthetic_datasets(NOISE_AUDIO_ARRAYS=audio_list)
-            synthetic_dataset = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
-            synthetic_dataset = ds.remove_columns('label').rename_column('re_label', 'label')
+            synthetic_dataset = synthetic_dataset.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
+            synthetic_dataset = synthetic_dataset.remove_columns('label').rename_column('re_label', 'label')
             ds = concatenate_datasets([ds, synthetic_dataset])
 
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
