@@ -126,6 +126,24 @@ def create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS:list=None, NOISE_AUDIO
         output_data_list.append(data_dict)
     return output_data_list
 
+def create_synthetic_datasets(noise_data_count=1800, NOISE_AUDIO_PATH_ARRAYS:list=None, NOISE_AUDIO_ARRAYS:list=None):
+    """
+    Combines the process of creating noise data and merging it
+    with an existing dataset.
+    """
+    synthetic_silence_data = create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS, NOISE_AUDIO_ARRAYS, data_count=noise_data_count)
+
+    new_synthetic_silence_dataset = Dataset.from_list(synthetic_silence_data)
+
+    new_synthetic_silence_dataset = new_synthetic_silence_dataset.cast_column('audio', Audio(sampling_rate=16_000))
+    new_synthetic_silence_dataset = new_synthetic_silence_dataset.cast_column(
+        'label', 
+        ClassLabel(names=['yes', 'no', 'up', 'down', 'left', 'right', 'on', 'off', 'stop', 'go', '_silence_', 'unknown'])
+    ).cast_column("label", Value("int64"))
+    new_synthetic_silence_dataset = new_synthetic_silence_dataset.cast_column("utterance_id", Value("int8"))  # <- fix the error
+
+    return new_synthetic_silence_dataset
+
 def create_and_combine_datasets(concating_dataset, noise_data_count=1800, NOISE_AUDIO_PATH_ARRAYS:list=None, NOISE_AUDIO_ARRAYS:list=None):
     """
     Combines the process of creating noise data and merging it

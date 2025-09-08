@@ -6,8 +6,8 @@ from typing import Any, Callable, Dict, List, Optional, Sequence
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from datasets import load_from_disk, load_dataset
-from src.data.audio_augmentation import create_and_combine_datasets, random_augementation, AugmentationMethod
+from datasets import load_from_disk, load_dataset, concatenate_datasets
+from src.data.audio_augmentation import create_synthetic_datasets, random_augementation, AugmentationMethod
 
 # Keywords
 LABEL_MAP = {
@@ -99,16 +99,7 @@ class CustomAudioDataset(Dataset):
         else:
             ds = load_dataset("google/speech_commands", data_version, split=split, trust_remote_code=True)
         
-        if use_augmentation:
-            # Augementation dataset
-            # Silent generation 5 -> 1800
-            # Filter rows with label == 10
-            filtered_silence_dataset = ds.filter(lambda example: example["label"] == 10)
-            # Convert audio to list of numpy arrays
-            audio_list = [np.array(sample["audio"]["array"]) for sample in filtered_silence_dataset]
-            ds = create_and_combine_datasets(ds, NOISE_AUDIO_ARRAYS=audio_list)
-
-        # Global access to the label mapping, useful for transform_labels
+         # Global access to the label mapping, useful for transform_labels
         global ID_TO_LABEL, LABEL_TO_ID
         class_names = ds.features['label'].names
         LABEL_TO_ID = {label: i for i, label in enumerate(class_names)}
@@ -116,7 +107,19 @@ class CustomAudioDataset(Dataset):
         ds = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
         ds = ds.remove_columns('label').rename_column('re_label', 'label')
 
-        
+        if use_augmentation:
+            # Augementation dataset
+            # Silent generation 5 -> 1800
+            # Filter rows with label == 10
+            filtered_silence_dataset = ds.filter(lambda example: example["label"] == 10)
+            # Convert audio to list of numpy arrays
+            audio_list = [np.array(sample["audio"]["array"]) for sample in filtered_silence_dataset]
+            
+            synthetic_dataset = create_synthetic_datasets(ds, NOISE_AUDIO_ARRAYS=audio_list)
+            synthetic_dataset = ds.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
+            synthetic_dataset = ds.remove_columns('label').rename_column('re_label', 'label')
+            ds = concatenate_datasets([ds, synthetic_dataset])
+
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
         ds = ds.map(self._add_anomaly_label)
         self.ds = ds
