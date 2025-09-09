@@ -14,7 +14,8 @@ Paper: [Proposed Robust Model for Speech Command Detection and Recognition Using
 `pip install -r requirements.txt`
 
 ### 2.2 Datasets
-The data will be automatically downloaded and processed
+The data will be automatically downloaded and processed.
+You can also create some synthetic audio files using [MeloTTS](https://github.com/myshell-ai/MeloTTS).
 
 ## 3. Experiments
 
