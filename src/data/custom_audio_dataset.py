@@ -111,7 +111,8 @@ class CustomAudioDataset(Dataset):
             # Augementation dataset
             # Silent generation 5 -> 1800
             # Filter rows with label == 10
-            filtered_silence_dataset = ds.filter(lambda example: example["label"] == LABEL_TO_ID['_silence_'])
+            # filtered_silence_dataset = ds.filter(lambda example: example["label"] == LABEL_TO_ID['_silence_'])
+            filtered_silence_dataset = ds.filter(lambda example: example["label"] == 10)
             # Convert audio to list of numpy arrays
             audio_list = [np.array(sample["audio"]["array"]) for sample in filtered_silence_dataset]
             
@@ -163,3 +164,4 @@ class CustomAudioDataset(Dataset):
     def show_counts(self) -> None:
         df = self.ds.to_pandas()
         print(df["label"].value_counts())
+
