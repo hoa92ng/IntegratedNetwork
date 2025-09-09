@@ -117,8 +117,8 @@ def create_synthetic_silence_data(NOISE_AUDIO_PATH_ARRAYS:list=None, NOISE_AUDIO
                 'array': arr,
                 'sampling_rate': sr
             },
-            # Using 10 as the label for noise/silence
-            'label': 10,
+            # Using 11 as the label for noise/silence
+            'label': 11,
             "is_unknown": False,
             "speaker_id": "Synthetic",
             "utterance_id": -1
