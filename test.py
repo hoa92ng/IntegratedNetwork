@@ -31,7 +31,7 @@ def make_backbone(name: str, device: str):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--backbone_model", default="wavlm-base")
-    ap.add_argument("--test_data_path", required=True)
+    ap.add_argument("--test_data_path")
     ap.add_argument("--batch_size", type=int, default=8)
     ap.add_argument("--ckpt", type=str, default=None, help="Optional state_dict to load")
     ap.add_argument("--num_classes", type=int, default=11)
