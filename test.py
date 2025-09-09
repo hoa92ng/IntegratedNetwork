@@ -114,7 +114,7 @@ def main():
     with torch.no_grad():
         for b in dl:
             x = b["input_values"].to(device)
-            y_an = b["anomaly_label"].to(device).long()  # 1 = valid command, 0 = anomaly
+            y_an = b["nomaly_label"].to(device).long()  # 1 = valid command, 0 = anomaly
             y_cls = b["label"].to(device).long()
 
             # Forward pass
