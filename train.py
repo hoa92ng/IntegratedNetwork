@@ -75,7 +75,7 @@ def train(args) -> None:
         proj_layers=args.proj_layers,
         use_cbam=not args.no_cbam,
         use_noise=not args.no_noise,
-        cbam_alpha=not args.cbam_alpha,
+        cbam_alpha=args.cbam_alpha,
         use_smoothing=not args.use_smoothing,
         cbam_resblock=args.cbam_resblock,
         disc_layers=args.disc_layers,
