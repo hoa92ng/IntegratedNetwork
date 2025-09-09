@@ -55,7 +55,7 @@ def main():
 
     # Dataset config
     ap.add_argument("--use_data_from_disk", action="store_true")
-    ap.add_argument("--data_version", type=str, default="v1")
+    ap.add_argument("--data_version", type=str, default="v0.01")
 
     args = ap.parse_args()
     device = "cuda" if torch.cuda.is_available() else "cpu"
