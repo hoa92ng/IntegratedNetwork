@@ -69,7 +69,7 @@ def main():
         use_data_from_disk=args.use_data_from_disk,
         split="test",
         data_version=args.data_version,
-        data_path=args.test_data_path,
+        dataset_path=args.test_data_path,
     )
     dl = DataLoader(test_va, batch_size=args.batch_size, shuffle=False)
 
