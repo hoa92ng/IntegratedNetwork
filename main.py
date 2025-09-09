@@ -17,7 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     p.add_argument("--batch_size", type=int, default=16)
     p.add_argument("--epochs", type=int, default=20)
-    p.add_argument("--lr", type=float, default=3e-4)
+    p.add_argument("--lr", type=float, default=1e-5)
     p.add_argument("--weight_decay", type=float, default=1e-2)
     p.add_argument("--warmup_steps", type=int, default=300)
     p.add_argument("--workers", type=int, default=4)
@@ -50,4 +50,5 @@ if __name__ == "__main__":
     parser = build_parser()
     args = parser.parse_args()
     train(args)
+
 
