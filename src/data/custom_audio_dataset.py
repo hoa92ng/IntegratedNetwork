@@ -119,8 +119,10 @@ class CustomAudioDataset(Dataset):
             synthetic_dataset = create_synthetic_datasets(NOISE_AUDIO_ARRAYS=audio_list)
             synthetic_dataset = synthetic_dataset.map(transform_labels, batched=True).map(add_nomaly_and_re_labels, batched=True)
             synthetic_dataset = synthetic_dataset.remove_columns('label').rename_column('re_label', 'label')
+            print(ds)
             print(synthetic_dataset)
             ds = concatenate_datasets([ds, synthetic_dataset])
+            print(ds)
 
         ds = ds.map(self._preprocess_function, remove_columns=["audio"], batched=True)
         ds = ds.map(self._add_anomaly_label)
@@ -165,5 +167,6 @@ class CustomAudioDataset(Dataset):
     def show_counts(self) -> None:
         df = self.ds.to_pandas()
         print(df["label"].value_counts())
+
 
 
