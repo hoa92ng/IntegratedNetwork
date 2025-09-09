@@ -118,7 +118,7 @@ def main():
             y_cls = b["label"].to(device).long()
 
             # Forward pass
-            cls_logits, an_logits = model(x, anomaly_label=y_an, train_mode=False)
+            cls_logits, an_logits = model(x, train_mode=False)
 
             # ----- Loss -----
             # Compute classification loss only on valid samples
