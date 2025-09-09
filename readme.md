@@ -1,10 +1,10 @@
 ## 1. Overview
 
-This is the Pytorch implementation for "Robust Model for Speech Command Recognition with Integrated Classifier (xxx25)"
+This is the Pytorch implementation for "Proposed Robust Model for Speech Command Detection and Recognition Using an Integrated Classifier (xxx25)"
 
 Authors: Van-Hoa Nguyen, Viet-Cuong Ta
 
-Paper: [Robust Model for Speech Command Recognition with Integrated Classifier](https://www.xxxxx)
+Paper: [Proposed Robust Model for Speech Command Detection and Recognition Using an Integrated Classifier](https://www.xxxxx)
 
 ![Proposed Architecture](./img/proposed_architecture.png)
 
